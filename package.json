@@ -1,0 +1,19 @@
+{
+  "name": "smclone",
+  "version": "1.0.0",
+  "description": "social media clone",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mousajaffrah/smclone.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mousajaffrah/smclone/issues"
+  },
+  "homepage": "https://github.com/mousajaffrah/smclone#readme"
+}
