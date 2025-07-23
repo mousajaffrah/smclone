@@ -1,8 +1,16 @@
+require('dotenv').config();
 const { Sequelize, DataTypes } = require('sequelize');
-const { FOREIGNKEYS } = require('sequelize/lib/query-types');
 
-const sequelize = new Sequelize('sqlite::memory:');
-
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASS,
+  {
+    host: process.env.DB_HOST,
+    dialect: 'postgres',
+    logging: false, 
+  }
+);
 const User = sequelize.define('User', {
   ID: {
     type: DataTypes.INTEGER,
@@ -135,7 +143,7 @@ const Friendships = sequelize.define('Friendship', {
 
 //foreign keys from ChatGPT I Searched All the Internet Couldn't Find A Clue how to connect Those Tables  
 
-
+//Many to One
 User.hasMany(Post, { foreignKey: 'authorid', onDelete: 'CASCADE' });
 Post.belongsTo(User, { foreignKey: 'authorid' });
 
@@ -145,26 +153,42 @@ Comment.belongsTo(User, { foreignKey: 'authorid' });
 Post.hasMany(Comment, { foreignKey: 'postid', onDelete: 'CASCADE' });
 Comment.belongsTo(Post, { foreignKey: 'postid' });
 
-User.hasMany(Like, { foreignKey: 'userid', onDelete: 'CASCADE' });
-Like.belongsTo(User, { foreignKey: 'userid' });
+User.hasMany(Likes, { foreignKey: 'userid', onDelete: 'CASCADE' });
+Likes.belongsTo(User, { foreignKey: 'userid' });
 
-Post.hasMany(Like, { foreignKey: 'postid', onDelete: 'CASCADE' });
-Like.belongsTo(Post, { foreignKey: 'postid' });
+Post.hasMany(Likes, { foreignKey: 'postid', onDelete: 'CASCADE' });
+Likes.belongsTo(Post, { foreignKey: 'postid' });
 
-User.hasMany(Message, { foreignKey: 'senderid', as: 'SentMessages' });
-User.hasMany(Message, { foreignKey: 'receiverid', as: 'ReceivedMessages' });
+User.hasMany(Messages, { foreignKey: 'senderid', as: 'SentMessages' });
+User.hasMany(Messages, { foreignKey: 'receiverid', as: 'ReceivedMessages' });
 
-Message.belongsTo(User, { foreignKey: 'senderid', as: 'Sender' });
-Message.belongsTo(User, { foreignKey: 'receiverid', as: 'Receiver' });
+//One to One
+Messages.belongsTo(User, { foreignKey: 'senderid', as: 'Sender' });
+Messages.belongsTo(User, { foreignKey: 'receiverid', as: 'Receiver' });
 
-User.hasMany(Friendship, { foreignKey: 'requesterid', as: 'RequestsSent' });
-User.hasMany(Friendship, { foreignKey: 'receiverid', as: 'RequestsReceived' });
+//Many to Many
+User.hasMany(Friendships, { foreignKey: 'requesterid', as: 'RequestsSent' });
+User.hasMany(Friendships, { foreignKey: 'receiverid', as: 'RequestsReceived' });
 
-Friendship.belongsTo(User, { foreignKey: 'requesterid', as: 'Requester' });
-Friendship.belongsTo(User, { foreignKey: 'receiverid', as: 'Receiver' });
+Friendships.belongsTo(User, { foreignKey: 'requesterid', as: 'Requester' });
+Friendships.belongsTo(User, { foreignKey: 'receiverid', as: 'Receiver' });
 
 
 (async () => {
   await sequelize.sync({ force: true });
   console.log('All tables created with foreign keys.');
 })();
+/*
+pgadmin instead of sqlite
+
+
+KNOW WHAT IS REACT.JS
+project React.js
+understand what is component and how to seperate
+component is container like div
+
+
+tala write auth
+me doing frontend and routes
+
+*/
