@@ -1,1 +1,2 @@
-console.log('hello,world')
+const x = "dfg"
+console.log('hello,world',x)

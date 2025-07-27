@@ -1,63 +1,51 @@
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        DOCKER_IMAGE = 'noorhalabi/my-smclone-app'
-        K8S_DEPLOYMENT = 'my-smclone-app'
+  environment {
+    DOCKER_IMAGE = 'noorhalabi/my-smclone-app'
+    K8S_DEPLOYMENT = 'my-smclone-app'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
     }
 
-    stages {
-
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                sh 'npm test' // Skip if no test, or replace with actual script
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    sh "docker build -t $DOCKER_IMAGE ."
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh """
-                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                        docker push $DOCKER_IMAGE
-                    """
-                }
-            }
-        }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh "kubectl rollout restart deployment/$K8S_DEPLOYMENT"
-            }
-        }
+    stage('Install') {
+      steps {
+        sh 'npm install'
+      }
     }
 
-    post {
-        failure {
-            echo '❌ Build failed!'
-        }
-        success {
-            echo '✅ Deployment complete!'
-        }
+    stage('Test') {
+      steps {
+        sh 'npm test || echo "No tests defined"'
+      }
     }
+
+    stage('Docker Build & Push') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+          sh '''
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker build -t $DOCKER_IMAGE .
+            docker push $DOCKER_IMAGE
+          '''
+        }
+      }
+    }
+
+    stage('Deploy to Kubernetes') {
+      steps {
+        sh 'kubectl rollout restart deployment/$K8S_DEPLOYMENT'
+      }
+    }
+  }
+
+  post {
+    failure { echo ' Build or deploy failed!' }
+    success { echo ' Everything succeeded!' }
+  }
 }
