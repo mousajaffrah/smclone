@@ -12,10 +12,9 @@
   "version": "1.0.0",
   "description": "social media clone",
   "main": "index.js",
-  "scripts": {
-   "start": "node main.js",
-   "start-dev": "nodemon main.js"
-  },
+ "scripts": {
+  "start": "node index.js"
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mousajaffrah/smclone.git"
