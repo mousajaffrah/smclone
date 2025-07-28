@@ -1,63 +1,39 @@
 pipeline {
-    agent any
-
-    environment {
-        DOCKER_IMAGE = 'noorhalabi/my-smclone-app'
-        K8S_DEPLOYMENT = 'my-smclone-app'
+    agent { 
+        node {
+            label 'docker-agent-python'
+            }
+      }
+    triggers {
+        pollSCM '* * * * *'
     }
-
     stages {
-
-        stage('Checkout') {
+        stage('Build') {
             steps {
-                checkout scm
+                echo "Building.."
+                sh '''
+                cd myapp
+                pip install -r requirements.txt
+                '''
             }
         }
-
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
-
         stage('Test') {
             steps {
-                sh 'npm test' // Skip if no test, or replace with actual script
+                echo "Testing.."
+                sh '''
+                cd myapp
+                python3 hello.py
+                python3 hello.py --name=Brad
+                '''
             }
         }
-
-        stage('Build Docker Image') {
+        stage('Deliver') {
             steps {
-                script {
-                    sh "docker build -t $DOCKER_IMAGE ."
-                }
+                echo 'Deliver....'
+                sh '''
+                echo "doing delivery stuff.."
+                '''
             }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh """
-                        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                        docker push $DOCKER_IMAGE
-                    """
-                }
-            }
-        }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh "kubectl rollout restart deployment/$K8S_DEPLOYMENT"
-            }
-        }
-    }
-
-    post {
-        failure {
-            echo '❌ Build failed!'
-        }
-        success {
-            echo '✅ Deployment complete!'
         }
     }
 }
