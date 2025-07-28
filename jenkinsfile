@@ -1,27 +1,17 @@
-pipeline {
-    agent {
-        docker {
-            image 'node:18' // or use 'node:20' if needed
-        }
-    }
+node {
+    // Run inside a Docker container with Node.js
+    docker.image('node:18').inside {
 
-    stages {
         stage('Install') {
-            steps {
-                sh 'npm install'
-            }
+            sh 'npm install'
         }
 
         stage('Test') {
-            steps {
-                sh 'npm test || echo "No tests configured"'
-            }
+            sh 'npm test || echo "No tests configured"'
         }
 
         stage('Run App') {
-            steps {
-                sh 'node index.js' // or whatever your main file is
-            }
+            sh 'node index.js'  // change to your main file if needed
         }
     }
 }
