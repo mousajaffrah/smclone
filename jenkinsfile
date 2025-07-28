@@ -1,37 +1,44 @@
 pipeline {
-    agent { 
-        node {
-            label 'docker-agent-python'
-            }
-      }
-    triggers {
-        pollSCM '* * * * *'
+    agent any
+
+    environment {
+        IMAGE_NAME = 'noorhalabi/my-smclone-app'
+        CREDENTIALS_ID = 'dockerhub-creds' // Set this in Jenkins credentials
     }
+
     stages {
-        stage('Build') {
+        stage('Checkout Code') {
             steps {
-                echo "Building.."
-                sh '''
-                cd myapp
-                pip install -r requirements.txt
-                '''
+                git 'https://github.com/mousajaffrah/smclone.git'
             }
         }
-        stage('Test') {
+
+        stage('Build Docker Image') {
             steps {
-                echo "Testing.."
-                sh '''
-                cd myapp
-                python3 hello.py
-                python3 hello.py --name=Brad
-                '''
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
-        stage('Deliver') {
+
+        stage('Push Docker Image') {
             steps {
-                echo 'Deliver....'
+                withCredentials([usernamePassword(
+                    credentialsId: CREDENTIALS_ID,
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push $IMAGE_NAME
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
                 sh '''
-                echo "doing delivery stuff.."
+                    kubectl apply -f deployment.yaml
+                    kubectl apply -f service.yaml
                 '''
             }
         }
