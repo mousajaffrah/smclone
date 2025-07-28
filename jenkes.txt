@@ -1,3 +1,7 @@
+jenkes used for build, test , deploy and its Automation Platform 
+ 
+
+
 ci/dc
 
 ci: Continuous Integration
