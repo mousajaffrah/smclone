@@ -1,38 +1,27 @@
 pipeline {
-    agent { 
-        node {
-            label 'docker-agent-python'
-            }
-      }
-    triggers {
-        pollSCM '* * * * *'
+    agent {
+        docker {
+            image 'node:18'  // or 'node:20' if you need latest
+        }
     }
+
     stages {
-        stage('Build') {
+        stage('Install Dependencies') {
             steps {
-                echo "Building.."
-                sh '''
-                cd myapp
-                pip install -r requirements.txt
-                '''
+                sh 'npm install'
             }
         }
+
+        stage('Run App') {
+            steps {
+                sh 'node index.js'  // or your main file
+            }
+        }
+
+        // Optional: add testing stage
         stage('Test') {
             steps {
-                echo "Testing.."
-                sh '''
-                cd myapp
-                python3 hello.py
-                python3 hello.py --name=Brad
-                '''
-            }
-        }
-        stage('Deliver') {
-            steps {
-                echo 'Deliver....'
-                sh '''
-                echo "doing delivery stuff.."
-                '''
+                sh 'npm test'
             }
         }
     }
