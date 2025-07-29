@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-smclone-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-smclone-app
+  template:
+    metadata:
+      labels:
+        app: my-smclone-app
+    spec:
+      containers:
+        - name: node-container
+          image: noorhalabi/my-smclone-app
+          ports:
+            - containerPort: 8080

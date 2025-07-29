@@ -179,7 +179,10 @@ Friendships.belongsTo(User, { foreignKey: 'receiverid', as: 'Receiver' });
   console.log('All tables created with foreign keys.');
 })();
 
+
 export {User , Sequelize}
+
+
 
 /*
 pgadmin instead of sqlite

@@ -1,0 +1,19 @@
+ci/dc
+
+ci: Continuous Integration
+
+cd: Continuous Deployment
+
+Software Development Life Cycle:⬇️
+
+we write the code then we (build it or compute) then
+we test the bugs then deploy the production
+that use by users or customer then
+take feed backs and the plan
+
+1:code 2:build 3:test
+4:release 5:deploy 6:operate 7:monitor 8:plan 
+
+
+➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️➡️⬆️⬆️
+
