@@ -81,7 +81,7 @@ async function LoginUser(req, res) {
     }
 
     // Compare password
-    const match = await bcrypt.compare(password, user.password_hash);
+    const match = await bcrypt.compare(usrExists.password_hash, user.password_hash);
     if (!match) {
       return res.status(400).json({ message: 'Invalid password' });
     }
