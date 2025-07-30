@@ -1,20 +1,9 @@
-import { Sequelize, User } from "./models/schema.js"
-
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken'); // JWT
-const axios = require('axios'); // same as fetch
-const User = require('./models/schema.js');
-require('dotenv').config(); // used to load environment variables from a .env file into process.env in Node.js
-/*dotenv is a popular Node.js package that reads a .env file in the root of your project and loads the environment variables defined in that file into process.env.
-The call to require('dotenv').config() initializes dotenv and loads the variables so that anywhere in your code you can access them via process.env.VARIABLE_NAME.
-In this file, process.env.USER_SERVICE_URL and process.env.JWT_SECRET are used, which are expected to be defined in the .env file.
-
-The .env file is not a JavaScript or Node.js module, so you cannot require it directly like a JS file.
-The .env file is a plain text file with key=value pairs, not executable code.
-The dotenv package parses this file and loads the variables into process.env at runtime.
-This approach keeps sensitive configuration like secrets and URLs out of the source code and allows different environment configurations without changing code.
-So, require('dotenv').config() is the standard way to load environment variables from a .env file in Node.js projects.
-*/
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken'; // JWT
+import axios from 'axios'; // same as fetch
+import User from '../models/schema.js';
+import dotenv from 'dotenv';
+dotenv.config(); // used to load environment variables from a .env file into process.env in Node.js
 
 const USER_URL = 'http://localhost:8080'; // user microservice URL OR  process.env.USER_SERVICE_URL 
 
@@ -100,9 +89,4 @@ async function LoginUser(req, res) {
   }
 };
 
-// module.exports = {
-//   registerUser,
-//   loginUser,
-// };
-
-export { RegisterUser, LoginUser }
+export { RegisterUser, LoginUser };

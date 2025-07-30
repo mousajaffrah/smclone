@@ -1,5 +1,7 @@
-require('dotenv').config();
-const { Sequelize, DataTypes } = require('sequelize');
+import dotenv from 'dotenv';
+dotenv.config();
+
+import { Sequelize, DataTypes } from 'sequelize';
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -11,7 +13,8 @@ const sequelize = new Sequelize(
     logging: false, 
   }
 );
-const User = sequelize.define('User', {
+
+export const User = sequelize.define('User', {
   ID: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -179,8 +182,8 @@ Friendships.belongsTo(User, { foreignKey: 'receiverid', as: 'Receiver' });
   console.log('All tables created with foreign keys.');
 })();
 
+export default {User, Sequelize};
 
-export {User , Sequelize}
 
 
 

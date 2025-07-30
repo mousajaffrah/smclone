@@ -1,10 +1,6 @@
-// import { User } from "./models/schema.js"
-import { RegisterUser,LoginUser } from "./controller/authController.js";
-// const { Sequelize, DataTypes } = require('sequelize')
-
-// const url = require('url');
-const cors = require('cors');
-const express = require('express');
+import { RegisterUser, LoginUser } from "./controller/authController.js";
+import cors from 'cors';
+import express from 'express';
 
 const app = express();
 
@@ -15,9 +11,9 @@ app.use(cors({
     credentials: true
 }));
 
-app.post('/login', LoginUser)
+app.post('/login', LoginUser);
 
-app.post('/register', RegisterUser())
+app.post('/register', RegisterUser);
 
 try {
     app.listen(port, () => {
