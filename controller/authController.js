@@ -1,7 +1,8 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken'; // JWT
 import axios from 'axios'; // same as fetch
-import User from '../models/schema.js';
+import User from '../models/User.js'
+
 import dotenv from 'dotenv';
 dotenv.config(); // used to load environment variables from a .env file into process.env in Node.js
 
@@ -10,9 +11,20 @@ const USER_URL = 'http://localhost:8080'; // user microservice URL OR  process.e
 async function RegisterUser(req, res) {
   const user = req.body;
 
+  const password = req.body.password || req.body.password_hash;
+
+  console.log('Registration request body:', user);
+  console.log('Password:', password);
+
+  // Validate required fields
+  if (!user.username || !user.email || !password) {
+    return res.status(400).json({ 
+      message: 'Missing required fields: username, email, and password are required' 
+    });
+  }
+
   try {
-    // Check if username exists
-    // const userExists = await axios.get(USER_URL + '/users/exists?username=' + username);
+
 
     const usrExists = await User.findOne({
       where: { username: user.username, },
@@ -25,7 +37,8 @@ async function RegisterUser(req, res) {
 
     // Hash password
     const saltRounds = 10;
-    const password_hash = await bcrypt.hash(password, saltRounds);
+    console.log('About to hash password:', password, 'with salt rounds:', saltRounds);
+    const password_hashed = await bcrypt.hash(password, saltRounds);
     /*Salt in hashing is a random value added to the input before hashing it. The purpose of 
     using salt is to ensure that even if two users have the same password, their hashed passwords 
     will be different due to the unique salt value. This protects against attacks such as rainbow
@@ -38,15 +51,18 @@ async function RegisterUser(req, res) {
     const newUser = await User.create({
       username: user.username,
       email: user.email,
-      password_hash: password_hash,
+      password_hash: password_hashed,
       avatar: user.avatar ? user.avatar : null,
       bio: user.bio ? user.bio : null,
     })
 
     // generate JWT token
+    console.log('JWT_SECRET available:', !!process.env.JWT_SECRET);
+    console.log('New user data:', { id: newUser.ID, username: newUser.username });
+    
     const token = jwt.sign(
-      { id: newUser.id, username: newUser.username }, // payload
-      process.env.JWT_SECRET, // secret key was generated: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+      { id: newUser.ID, username: newUser.username }, // payload
+      process.env.JWT_SECRET, // secret key was generated: node -e "console.log(require('crypto').randomBytes(32).randomBytes(32).toString('hex'))"
       { expiresIn: '6h' }
     );
     res.status(201).json({ token });
@@ -70,14 +86,14 @@ async function LoginUser(req, res) {
     }
 
     // Compare password
-    const match = await bcrypt.compare(usrExists.password_hash, user.password_hash);
+    const match = await bcrypt.compare(user.password, usrExists.password_hash);
     if (!match) {
       return res.status(400).json({ message: 'Invalid password' });
     }
 
     // Generate JWT token
     const token = jwt.sign(
-      { id: user.id, username: user.username }, //payload
+      { id: usrExists.ID, username: usrExists.username }, //payload
       process.env.JWT_SECRET, // secret
       { expiresIn: '6h' }
     );
