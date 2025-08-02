@@ -106,5 +106,16 @@ async function LoginUser(req, res) {
     res.status(500).json({ message: 'Internal server error' });
   }
 }
+const getUsers = (req,res) =>{
+  User.findAll({
+    attributes: ['ID', 'username', 'email', 'avatar', 'bio'],
+  })
+    .then(users => res.json(users))
+    .catch(error => {
+      console.error('Get users error:', error.message);
+      res.status(500).json({ message: 'Internal server error' });
+    });
+}
 
-export { RegisterUser, LoginUser };
+
+export { RegisterUser, LoginUser , getUsers};
