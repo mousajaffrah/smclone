@@ -3,6 +3,7 @@ import initializeDatabase from "./models/initializeDatabase.js";
 import cors from 'cors';
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import postRoutes from './routs/postRoutes.js';
 
 const app = express();
 const port = 3001;
@@ -16,7 +17,10 @@ app.use(express.json());
 
 app.post('/login', LoginUser);
 app.post('/register', RegisterUser);
-app.get('/all', getUsers)
+app.get('/all', getUsers);
+
+// Post routes
+app.use('/posts', postRoutes);
 
 initializeDatabase();
 
