@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -36,6 +37,13 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
+
+      - name: Check secrets presence
+        run: |
+          echo "EC2_HOST set: ${{ secrets.EC2_HOST != '' }}"
+          echo "EC2_USER set: ${{ secrets.EC2_USER != '' }}"
+          echo "EC2_SSH_KEY set: ${{ secrets.EC2_SSH_KEY != '' }}"
+
       - name: Deploy and run Node.js app on EC2
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -52,4 +60,3 @@ jobs:
             npm install
             pm2 start npm --name smclone -- start || pm2 reload smclone
             pm2 save
-
