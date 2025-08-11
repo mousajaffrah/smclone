@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .result {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Social Media API Test</h1>
+    
+    <!-- Authentication Section -->
+    <div class="container">
+        <h2>Authentication</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="register()">Register</button>
+        <button onclick="login()">Login</button>
+        <div id="authResult" class="result"></div>
+    </div>
+
+    <!-- Posts Section -->
+    <div class="container">
+        <h2>Posts</h2>
+        <button onclick="getPosts()">Get All Posts</button>
+        <textarea id="postContent" placeholder="Post content"></textarea>
+        <input type="text" id="imageUrl" placeholder="Image URL (optional)">
+        <button onclick="createPost()">Create Post</button>
+        <div id="postResult" class="result"></div>
+    </div>
+
+    <!-- Friendship Section -->
+    <div class="container">
+        <h2>Friendship</h2>
+        <input type="number" id="user1Id" placeholder="User 1 ID">
+        <input type="number" id="user2Id" placeholder="User 2 ID">
+        <button onclick="createFriendship()">Create Friendship Request</button>
+        <div id="friendshipResult" class="result"></div>
+    </div>
+
+    <script>
+        let token = '';
+
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token && { 'Authorization': `Bearer ${token}` }),
+                        ...options.headers
+                    },
+                    ...options
+                });
+                const data = await response.json();
+                return { status: response.status, data };
+            } catch (error) {
+                return { status: 'error', data: error.message };
+            }
+        }
+
+        async function register() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const result = await makeRequest('http://localhost:3001/register', {
+                method: 'POST',
+                body: JSON.stringify({ username, password })
+            });
+            
+            document.getElementById('authResult').textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const result = await makeRequest('http://localhost:3001/login', {
+                method: 'POST',
+                body: JSON.stringify({ username, password })
+            });
+            
+            if (result.data.token) {
+                token = result.data.token;
+            }
+            
+            document.getElementById('authResult').textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function getPosts() {
+            const result = await makeRequest('http://localhost:3001/api/posts');
+            document.getElementById('postResult').textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function createPost() {
+            const content = document.getElementById('postContent').value;
+            const imageurl = document.getElementById('imageUrl').value;
+            
+            const result = await makeRequest('http://localhost:3001/api/posts', {
+                method: 'POST',
+                body: JSON.stringify({ content, imageurl })
+            });
+            
+            document.getElementById('postResult').textContent = JSON.stringify(result, null, 2);
+        }
+
+        async function createFriendship() {
+            const user1Id = document.getElementById('user1Id').value;
+            const user2Id = document.getElementById('user2Id').value;
+            
+            const result = await makeRequest('http://localhost:3001/api/friendship', {
+                method: 'POST',
+                body: JSON.stringify({ user1Id: parseInt(user1Id), user2Id: parseInt(user2Id) })
+            });
+            
+            document.getElementById('friendshipResult').textContent = JSON.stringify(result, null, 2);
+        }
+    </script>
+</body>
+</html> 
