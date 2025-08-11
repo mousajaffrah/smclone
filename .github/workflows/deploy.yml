@@ -38,7 +38,6 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
 
-   
       - name: Deploy and run Node.js app on EC2
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -47,9 +46,11 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sudo apt update
-            sudo apt install -y nodejs npm git
+            sudo apt install -y nodejs npm
+            sudo npm install -g pm2
             rm -rf smclone
             git clone https://github.com/mousajaffrah/smclone.git
             cd smclone
             npm install
-            nohup npm start &
+            pm2 start npm --name smclone -- start || pm2 reload smclone
+            pm2 save
