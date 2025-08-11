@@ -38,12 +38,6 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
 
-      - name: Check secrets presence
-        run: |
-          echo "EC2_HOST set: ${{ secrets.EC2_HOST != '' }}"
-          echo "EC2_USER set: ${{ secrets.EC2_USER != '' }}"
-          echo "EC2_SSH_KEY set: ${{ secrets.EC2_SSH_KEY != '' }}"
-
       - name: Deploy and run Node.js app on EC2
         uses: appleboy/ssh-action@v0.1.10
         with:
