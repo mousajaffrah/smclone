@@ -1,14 +1,14 @@
 import Post from '../models/post.js';
 import User from '../models/User.js';
-import Friendships from '../models/friendship.js';
-import { Op } from 'sequelize';
+// import Friendships from '../models/friendship.js';
+// import { Op } from 'sequelize';
 
 const createPost = (req, res) => {
     //content is mandatory and image is optional get them from the request
     const { content, imageurl } = req.body;
     //author id to add them then to post col then 
     //so we take the userid and save its value in authorid
-    const authorid = req.user.ID;
+    const authorid = req.user?.ID || 1; // Use default user ID 1 if not authenticated
 
     //if the user didn't add any content in post it won't go to database
     if (!content) {
@@ -79,4 +79,4 @@ const getPost = (req, res) => {
     });
 }
 
-export { createPost, getPost };
+export default { createPost, getPost };
