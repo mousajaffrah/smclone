@@ -2,7 +2,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
-data "aws_ami" "amazon_linux" {
+data "aws_ami" "free_tier_amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
   filter {
@@ -16,7 +16,7 @@ data "aws_ami" "amazon_linux" {
 }
 
 resource "aws_instance" "my_ec2" {
-  ami           = data.aws_ami.amazon_linux.id
+  ami           = data.aws_ami.free_tier_amazon_linux.id
   instance_type = "t2.micro"
   associate_public_ip_address = true
 
