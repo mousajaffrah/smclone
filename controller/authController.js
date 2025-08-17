@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ path: './config/.env' });
 
 async function RegisterUser(req, res) {
   const user = req.body;
