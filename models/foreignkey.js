@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ path: './config/.env' });
 
 import User from './User.js'
 import Comment from './comment.js'
