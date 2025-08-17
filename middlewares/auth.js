@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-dotenv.config(); // used to load environment variables from a .env file into process.env in Node.js
+dotenv.config({ path: './config/.env' }); // used to load environment variables from a .env file into process.env in Node.js
 
 const authenticateToken = (req, res, next) => { // call it at every req func?
   const authHeader = req.headers['authorization']; // authorization : Bearer <token>
