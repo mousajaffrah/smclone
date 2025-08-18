@@ -11,6 +11,9 @@ const Post = sequelize.define('Post', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  // username: {
+  //   type: DataTypes.STRING
+  // },
   content: {
     type: DataTypes.TEXT,
   },

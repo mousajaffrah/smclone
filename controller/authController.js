@@ -48,7 +48,14 @@ async function RegisterUser(req, res) {
       maxAge: 6 * 60 * 60 * 1000
     });
 
-    res.status(201).json({ message: "Signup successful" });
+    res.status(201).json({ 
+      message: "Signup successful",
+      token: token,
+      user: {
+        id: newUser.ID,
+        username: newUser.username
+      }
+    });
   } catch (error) {
     console.error('Registration error:', error.message);
     res.status(500).json({ message: 'Internal server error' });
@@ -100,7 +107,14 @@ async function LoginUser(req, res) {
       maxAge: 6 * 60 * 60 * 1000
     });
 
-    res.json({ message: "Login successful" });
+    res.json({ 
+      message: "Login successful",
+      token: token,
+      user: {
+        id: usrExists.ID,
+        username: usrExists.username
+      }
+    });
   } catch (error) {
     console.error('Login error:', error.message);
     res.status(500).json({ message: 'Internal server error' });

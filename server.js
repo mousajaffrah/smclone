@@ -16,7 +16,7 @@ app.use(express.json());
 
 app.post('/login', LoginUser);
 app.post('/register', RegisterUser);
-app.post('/posts', postController.createPost);
+app.post('/posts', postController.createPost);                          
 app.get('/posts', postController.getPost);
 
 initializeDatabase();

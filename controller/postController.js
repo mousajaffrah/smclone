@@ -21,6 +21,7 @@ const createPost = (req, res) => {
     //imageurl is optional if it is empty add a null value
     Post.create({
         authorid,
+        username,
         content,
         imageurl: imageurl || null,
     })
@@ -80,3 +81,7 @@ const getPost = (req, res) => {
 }
 
 export default { createPost, getPost };
+
+
+//change from local host to public ip
+
